@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Live TypeScript Transpiler</title>
+        <meta
+            name="description"
+            content="Paste TypeScript on the left — see the transpiled JavaScript on the right, live."
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+            rel="stylesheet"
+        />
+      <script type="module" crossorigin src="/LiveTypeScriptTranspiler/assets/index-k-dm4_o7.js"></script>
+      <link rel="stylesheet" crossorigin href="/LiveTypeScriptTranspiler/assets/index-CzoR2oql.css">
+    </head>
+    <body>
+        <header class="site-header">
+            <div class="container">
+                <h1>Live TypeScript Transpiler</h1>
+                <p class="tagline">
+                    Paste TypeScript on the left and watch it become JavaScript — real time, in the
+                    browser.
+                </p>
+            </div>
+        </header>
+
+        <main class="container grid">
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>TypeScript</h2>
+                    <div class="panel-actions">
+                        <button id="insert-sample">Insert sample</button>
+                    </div>
+                </div>
+                <textarea id="ts-input" aria-label="TypeScript input" spellcheck="false"></textarea>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h2>JavaScript</h2>
+                    <div class="panel-actions">
+                        <button id="copy-js">Copy</button>
+                    </div>
+                </div>
+                <pre id="js-output" aria-label="JavaScript output" readonly></pre>
+            </section>
+        </main>
+
+        <div class="container diagnostics" id="diagnostics" aria-live="polite"></div>
+
+        <footer class="container footer">
+            <small>Built with TypeScript and a browser-based TypeScript compiler • MIT</small>
+        </footer>
+
+        <!-- Load the TypeScript compiler in the browser from a CDN (runtime only) -->
+        <script src="https://cdn.jsdelivr.net/npm/typescript@latest/lib/typescript.js"></script>
+
+        <!-- App entry (Vite will load /src/scripts/main.ts as a module during dev) -->
+    </body>
+</html>
