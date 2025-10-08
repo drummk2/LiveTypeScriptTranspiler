@@ -1,5 +1,4 @@
 /* CodeMirror editor setup for syntax highlighting */
-
 import { EditorView, basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
 import { javascript } from '@codemirror/lang-javascript';

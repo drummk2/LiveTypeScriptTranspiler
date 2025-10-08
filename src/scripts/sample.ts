@@ -1,5 +1,4 @@
 /* Sample TypeScript code for the transpiler demo */
-
 export const sampleTypeScript = `/* Welcome to the Live TypeScript Transpiler! */
 /* Try editing this code to see real-time transpilation */
 

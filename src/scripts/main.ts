@@ -1,5 +1,3 @@
-/* main.ts — wiring for UI and in-browser TypeScript transpilation */
-
 /* Import TypeScript compiler (assuming it's available globally) */
 declare const ts: typeof import('typescript');
 
