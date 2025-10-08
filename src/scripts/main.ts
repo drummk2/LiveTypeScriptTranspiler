@@ -1,15 +1,24 @@
+/* main.ts — wiring for UI and in-browser TypeScript transpilation */
+
 /* Import TypeScript compiler (assuming it's available globally) */
 declare const ts: typeof import('typescript');
 
 /* Import sample TypeScript code */
 import { sampleTypeScript } from './sample.js';
 
+/* Import CodeMirror editors */
+import { createTypeScriptEditor, createJavaScriptEditor } from './editor.js';
+
 /* DOM element references */
-const tsInput = document.getElementById('ts-input') as HTMLTextAreaElement;
-const jsOutput = document.getElementById('js-output') as HTMLPreElement;
+const tsInputContainer = document.getElementById('ts-input') as HTMLElement;
+const jsOutputContainer = document.getElementById('js-output') as HTMLElement;
 const diagnosticsOutput = document.getElementById('diagnostics') as HTMLPreElement;
 const copyBtn = document.getElementById('copy-js') as HTMLButtonElement;
 const insertSampleBtn = document.getElementById('insert-sample') as HTMLButtonElement;
+
+/* CodeMirror editor instances */
+let tsEditor: any;
+let jsEditor: any;
 
 /* Debounce timer for transpilation */
 let debounceTimer: number | null = null;
@@ -23,11 +32,13 @@ function setDiagnostics(text: string): void {
 
 /* Transpile TypeScript to JavaScript and display results */
 function transpileAndShow(): void {
-    if (!tsInput || !jsOutput) return;
+    if (!tsEditor || !jsEditor) return;
 
-    const source = tsInput.value;
+    const source = tsEditor.state.doc.toString();
     if (!source.trim()) {
-        jsOutput.textContent = '';
+        jsEditor.dispatch({
+            changes: { from: 0, to: jsEditor.state.doc.length, insert: '' },
+        });
         setDiagnostics('');
         return;
     }
@@ -45,7 +56,9 @@ function transpileAndShow(): void {
         });
 
         /* Display transpiled JavaScript */
-        jsOutput.textContent = result.outputText || '';
+        jsEditor.dispatch({
+            changes: { from: 0, to: jsEditor.state.doc.length, insert: result.outputText || '' },
+        });
 
         /* Display diagnostics if any */
         if (result.diagnostics && result.diagnostics.length > 0) {
@@ -61,7 +74,13 @@ function transpileAndShow(): void {
             setDiagnostics('');
         }
     } catch (err) {
-        jsOutput.textContent = '/* Transpilation failed. See diagnostics below. */';
+        jsEditor.dispatch({
+            changes: {
+                from: 0,
+                to: jsEditor.state.doc.length,
+                insert: '/* Transpilation failed. See diagnostics below. */',
+            },
+        });
         setDiagnostics(String(err));
     }
 }
@@ -73,34 +92,44 @@ function scheduleTranspile(): void {
     debounceTimer = window.setTimeout(transpileAndShow, 220);
 }
 
-/* Set up event listeners */
-if (tsInput) {
-    tsInput.addEventListener('input', scheduleTranspile);
+/* Initialize editors and set up event listeners */
+function initializeApp(): void {
+    /* Create CodeMirror editors */
+    if (tsInputContainer) {
+        tsEditor = createTypeScriptEditor(tsInputContainer, '', scheduleTranspile);
+    }
+
+    if (jsOutputContainer) {
+        jsEditor = createJavaScriptEditor(jsOutputContainer, '');
+    }
+
+    /* Set up Insert Sample button */
+    if (insertSampleBtn) {
+        insertSampleBtn.addEventListener('click', () => {
+            if (tsEditor) {
+                tsEditor.dispatch({
+                    changes: { from: 0, to: tsEditor.state.doc.length, insert: sampleTypeScript },
+                });
+                scheduleTranspile(); /* Immediately transpile the sample code */
+                tsEditor.focus(); /* Focus the editor for immediate editing */
+            }
+        });
+    }
+
+    /* Set up Copy button */
+    if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+            try {
+                const jsCode = jsEditor?.state.doc.toString() || '';
+                await navigator.clipboard.writeText(jsCode);
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
+            } catch (e) {
+                setDiagnostics('Copy failed: ' + String(e));
+            }
+        });
+    }
 }
 
-if (insertSampleBtn) {
-    insertSampleBtn.addEventListener('click', () => {
-        if (tsInput) {
-            tsInput.value = sampleTypeScript;
-            scheduleTranspile(); /* Immediately transpile the sample code */
-            tsInput.focus(); /* Focus the textarea for immediate editing */
-        }
-    });
-}
-
-if (copyBtn) {
-    copyBtn.addEventListener('click', async () => {
-        try {
-            await navigator.clipboard.writeText(jsOutput.textContent || '');
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => (copyBtn.textContent = 'Copy'), 1200);
-        } catch (e) {
-            setDiagnostics('Copy failed: ' + String(e));
-        }
-    });
-}
-
-/* Run initial transpilation if input has content */
-if (tsInput && tsInput.value) {
-    scheduleTranspile();
-}
+/* Initialize the application */
+initializeApp();
