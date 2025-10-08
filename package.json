@@ -1,0 +1,17 @@
+{
+    "name": "livetypescripttranspiler",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "deploy": "gh-pages -d dist",
+        "dev": "vite",
+        "format": "prettier --write '**/*.{ts,js,css,html,json}'"
+    },
+    "devDependencies": {
+        "prettier": "^3.6.2",
+        "typescript": "~5.9.3",
+        "vite": "^7.1.7"
+    }
+}
