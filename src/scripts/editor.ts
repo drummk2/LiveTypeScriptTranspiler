@@ -9,16 +9,17 @@ import { oneDark } from '@codemirror/theme-one-dark';
 export function createTypeScriptEditor(
     parent: HTMLElement,
     initialValue: string = '',
-    onChange?: (value: string) => void
+    onChange?: () => void
 ) {
     const state = EditorState.create({
         doc: initialValue,
         extensions: [
             basicSetup,
             javascript({ typescript: true }),
+            oneDark,
             EditorView.updateListener.of((update) => {
                 if (update.docChanged && onChange) {
-                    onChange(update.state.doc.toString());
+                    onChange();
                 }
             }),
             EditorView.theme({

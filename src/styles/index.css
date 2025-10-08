@@ -1,10 +1,7 @@
 :root {
-    --bg: #0f1724;
     --card: #ffffff;
     --muted: #6b7280;
-    --accent: #0ea5a4;
     --surface: #f8fafc;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;
 }
 
 * {
@@ -77,7 +74,6 @@ body {
     flex: 1;
     width: 100%;
     min-height: 40vh;
-    border: 1px solid #e6e9ef;
     border-radius: 6px;
     min-width: 0; /* Allows content to wrap instead of expanding container */
 }
@@ -85,10 +81,6 @@ body {
 #ts-input .cm-editor,
 #js-output .cm-editor {
     height: 100%;
-}
-
-#js-output {
-    border: none; /* Remove border for dark theme output */
 }
 
 .panel-actions button {
